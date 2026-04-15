@@ -105,7 +105,7 @@ body {
 }
 
 /* --- COMPONENT STYLES (Skeletal) --- */
-.ledger-view, .sanctuary-view {
+.soup-view, .sanctuary-view {
   background: var(--bg);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -168,7 +168,7 @@ body {
   <div class="nq-wordmark">NakedQuantum</div>
   
   <div class="nav-toggle">
-    <button class="nav-btn active" id="btn-mode-ledger">Ledger</button>
+    <button class="nav-btn active" id="btn-mode-soup">Soup</button>
     <button class="nav-btn" id="btn-mode-sanctuary">Sanctuary</button>
   </div>
 
@@ -179,8 +179,8 @@ body {
 </div>
 
 <div class="view-host">
-  <!-- STATE 1: THE LEDGER (Archive) -->
-  <div class="view-panel ledger-view" id="view-ledger">
+  <!-- STATE 1: THE SOUP (Archive) -->
+  <div class="view-panel soup-view" id="view-soup">
     <div class="placeholder-center">
       <h1>The Soup</h1>
       <p>The boundless dark container.<br>Awaiting the firefly.</p>
@@ -200,7 +200,7 @@ body {
 
 <script>
 /* --- STATE MANAGEMENT --- */
-let currentMode = 'ledger';
+let currentMode = 'soup';
 let db = null;
 
 /* --- DB INITIALIZATION --- */
@@ -234,27 +234,27 @@ dbReq.onsuccess = (e) => {
 
 /* --- VIEW SWITCHER --- */
 function switchMode(mode) {
-  const ledger = document.getElementById('view-ledger');
+  const soup = document.getElementById('view-soup');
   const sanctuary = document.getElementById('view-sanctuary');
-  const btnLedger = document.getElementById('btn-mode-ledger');
+  const btnSoup = document.getElementById('btn-mode-soup');
   const btnSanctuary = document.getElementById('btn-mode-sanctuary');
 
   currentMode = mode;
 
-  if (mode === 'ledger') {
-    ledger.classList.remove('hidden');
+  if (mode === 'soup') {
+    soup.classList.remove('hidden');
     sanctuary.classList.add('hidden');
-    btnLedger.classList.add('active');
+    btnSoup.classList.add('active');
     btnSanctuary.classList.remove('active');
   } else {
-    ledger.classList.add('hidden');
+    soup.classList.add('hidden');
     sanctuary.classList.remove('hidden');
-    btnLedger.classList.remove('active');
+    btnSoup.classList.remove('active');
     btnSanctuary.classList.add('active');
   }
 }
 
-document.getElementById('btn-mode-ledger').onclick = () => switchMode('ledger');
+document.getElementById('btn-mode-soup').onclick = () => switchMode('soup');
 document.getElementById('btn-mode-sanctuary').onclick = () => switchMode('sanctuary');
 
 /* --- UTILS --- */
