@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="NakedQuantum">
 <link rel="manifest" href="/manifest.json">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NakedQuantum Beta v0.12</title>
+<title>NakedQuantum Beta v0.13</title>
 <style>
 :root {
   --bg: #000000;
@@ -203,7 +203,7 @@ button:active { opacity: 0.7; transform: scale(0.97); transition: transform 0.08
 .card-name { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card-meta { font-size: 10px; color: var(--muted); margin-top: 3px; }
 
-/* --- LIGHTHOUSE EDITOR (Sovereign) --- */
+/* --- LIGHTHOUSE EDITOR --- */
 .lighthouse-overlay {
   position: fixed;
   inset: 0;
@@ -305,7 +305,7 @@ button:active { opacity: 0.7; transform: scale(0.97); transition: transform 0.08
   color: var(--text);
 }
 
-/* --- THE SANCTUARY (Encounter) --- */
+/* --- THE SANCTUARY (Chat) --- */
 .sanctuary-view {
   background: var(--bg);
   display: flex;
@@ -438,6 +438,7 @@ button:active { opacity: 0.7; transform: scale(0.97); transition: transform 0.08
   <div class="view-panel soup-view" id="view-soup">
     <div class="breadcrumb-bar" id="breadcrumb-bar"></div>
     <div class="table-action-bar">
+      <button class="btn-table-action" id="btn-new-folder">+ New Folder</button>
       <button class="btn-table-action" id="btn-new-disc">+ New Fragment</button>
     </div>
     <div class="search-bar-wrap">
@@ -675,7 +676,7 @@ document.querySelectorAll('.fmt-btn').forEach(btn => {
     const wrap = btn.dataset.wrap;
     const line = btn.dataset.line;
     const insert = btn.dataset.insert;
-    if (wrap) applyFormat({ wrap: [wrap.slice(0,1), wrap.slice(-1)] }); // Simple wrap
+    if (wrap) applyFormat({ wrap: [wrap.slice(0,1), wrap.slice(-1)] });
     else if (line) applyFormat({ line });
     else if (insert) applyFormat({ insert });
   };
