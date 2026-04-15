@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="NakedQuantum">
 <link rel="manifest" href="/manifest.json">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NakedQuantum Beta v0.11</title>
+<title>NakedQuantum Beta v0.12</title>
 <style>
 :root {
   --bg: #000000;
@@ -203,7 +203,7 @@ button:active { opacity: 0.7; transform: scale(0.97); transition: transform 0.08
 .card-name { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card-meta { font-size: 10px; color: var(--muted); margin-top: 3px; }
 
-/* --- LIGHTHOUSE EDITOR (Inside Soup) --- */
+/* --- LIGHTHOUSE EDITOR (Sovereign) --- */
 .lighthouse-overlay {
   position: fixed;
   inset: 0;
@@ -305,7 +305,7 @@ button:active { opacity: 0.7; transform: scale(0.97); transition: transform 0.08
   color: var(--text);
 }
 
-/* --- THE SANCTUARY (Chat) --- */
+/* --- THE SANCTUARY (Encounter) --- */
 .sanctuary-view {
   background: var(--bg);
   display: flex;
@@ -727,7 +727,7 @@ function renderContent(raw) {
 function showToast(msg) {
   const t = document.getElementById('cosm-toast');
   t.textContent = msg; t.style.opacity = "1";
-  setTimeout(() => t.style.opacity = "0", 2000);
+  setTimeout(() => { t.style.opacity = "0" }, 2000);
 }
 
 document.getElementById('btn-new-disc').onclick = async () => {
