@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-title" content="NakedQuantum">
 <link rel="manifest" href="/manifest.json">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NakedQuantum Beta v0.13</title>
+<title>NakedQuantum Beta v0.14</title>
 <style>
 :root {
   --bg: #000000;
@@ -142,66 +142,73 @@ button:active { opacity: 0.7; transform: scale(0.97); transition: transform 0.08
 .breadcrumb-btn.current { color: var(--accent); opacity: 0.9; }
 .breadcrumb-arrow { color: var(--muted); font-size: 10px; opacity: 0.5; padding: 0 2px; }
 
-.table-action-bar {
+.soup-surface { 
+  padding: 0 16px 100px;
   display: flex;
-  gap: 10px;
-  padding: 10px 16px 14px;
-}
-.btn-table-action {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--accent);
-  border: 1px solid var(--border);
-  color: #000;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 10px 16px;
-  border-radius: 10px;
-  flex: 1;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.search-bar-wrap { padding: 8px 16px 4px; }
-.search-input {
-  width: 100%;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 9px 14px;
-  border-radius: 10px;
-  font-size: 14px;
-  outline: none;
-}
-
-.soup-surface { padding: 0 16px 100px; }
-.section-label {
-  font-size: 9px;
-  letter-spacing: 3px;
-  color: var(--accent);
-  opacity: 0.45;
-  font-weight: 900;
-  text-transform: uppercase;
-  padding: 14px 0 8px;
-}
-.cards-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.folder-card, .discourse-card {
+.fragment-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 14px;
+  padding: 16px;
   cursor: pointer;
-  transition: border-color 0.18s;
-  position: relative;
-  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s;
 }
-.folder-card:active, .discourse-card:active { border-color: var(--accent); background: var(--surface2); }
-.card-name { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.card-meta { font-size: 10px; color: var(--muted); margin-top: 3px; }
+.fragment-card:active { border-color: var(--accent); background: var(--surface2); }
+.fragment-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; font-family: var(--font-serif); }
+.fragment-meta { font-size: 10px; color: var(--muted); opacity: 0.6; }
+
+/* --- FAB (Floating Action Button) --- */
+.fab-container {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+.fab-main {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  color: #000;
+  font-size: 24px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(200,160,80,0.3);
+  transition: transform 0.3s ease;
+}
+.fab-main.open { transform: rotate(45deg); }
+.fab-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+.fab-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.fab-item {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
 
 /* --- LIGHTHOUSE EDITOR --- */
 .lighthouse-overlay {
@@ -362,7 +369,7 @@ button:active { opacity: 0.7; transform: scale(0.97); transition: transform 0.08
   font-weight: 900;
 }
 
-/* --- MODALS & OVERLAYS --- */
+/* --- MODALS --- */
 .cosm-overlay {
   position: fixed;
   inset: 0;
@@ -437,13 +444,6 @@ button:active { opacity: 0.7; transform: scale(0.97); transition: transform 0.08
   <!-- STATE 1: THE SOUP -->
   <div class="view-panel soup-view" id="view-soup">
     <div class="breadcrumb-bar" id="breadcrumb-bar"></div>
-    <div class="table-action-bar">
-      <button class="btn-table-action" id="btn-new-folder">+ New Folder</button>
-      <button class="btn-table-action" id="btn-new-disc">+ New Fragment</button>
-    </div>
-    <div class="search-bar-wrap">
-      <input class="search-input" id="search-input" placeholder="Search the soup...">
-    </div>
     <div class="soup-surface" id="soup-surface"></div>
   </div>
 
@@ -466,7 +466,16 @@ button:active { opacity: 0.7; transform: scale(0.97); transition: transform 0.08
   </div>
 </div>
 
-<!-- LIGHTHOUSE OVERLAY (Sovereign Editor) -->
+<!-- FAB -->
+<div class="fab-container">
+  <div class="fab-menu" id="fab-menu">
+    <button class="fab-item" id="fab-new-disc">+ New Fragment</button>
+    <button class="fab-item" id="fab-new-folder">+ New Folder</button>
+  </div>
+  <button class="fab-main" id="fab-main">+</button>
+</div>
+
+<!-- LIGHTHOUSE OVERLAY -->
 <div class="lighthouse-overlay" id="lh-overlay">
   <div class="lh-nav">
     <button class="btn-back" id="btn-lh-back">← Back</button>
@@ -512,6 +521,25 @@ button:active { opacity: 0.7; transform: scale(0.97); transition: transform 0.08
     <button class="modal-btn btn-confirm" id="btn-folder-confirm">Create</button>
   </div>
 </div>
+<div class="cosm-modal" id="mgmt-modal">
+  <div class="modal-title">Manage Fragment</div>
+  <div style="display:flex; flex-direction:column; gap:10px;">
+    <button class="modal-btn" id="btn-mgmt-rename">✎ Rename</button>
+    <button class="modal-btn" id="btn-mgmt-move">▤ Move</button>
+    <button class="modal-btn" id="btn-mgmt-delete" style="color:var(--danger);">✕ Delete</button>
+  </div>
+  <div class="modal-buttons">
+    <button class="modal-btn btn-cancel" id="btn-mgmt-cancel">Close</button>
+  </div>
+</div>
+<div class="cosm-modal" id="rename-modal">
+  <div class="modal-title">Rename</div>
+  <input class="cosm-input" id="rename-input" placeholder="New name...">
+  <div class="modal-buttons">
+    <button class="modal-btn btn-cancel" id="btn-rename-cancel">Cancel</button>
+    <button class="modal-btn btn-confirm" id="btn-rename-confirm">Save</button>
+  </div>
+</div>
 
 <div id="cosm-toast"></div>
 
@@ -522,6 +550,8 @@ let currentMode = 'soup';
 let currentFolderId = null;
 let currentDiscourseId = null;
 let breadcrumbPath = [{ id: null, name: '◈ root' }];
+let longPressTimer = null;
+let mgmtId = null;
 
 const dbReq = indexedDB.open("NakedQuantumDB", 1);
 dbReq.onupgradeneeded = (e) => {
@@ -562,6 +592,14 @@ function switchMode(mode) {
 document.getElementById('btn-mode-soup').onclick = () => switchMode('soup');
 document.getElementById('btn-mode-sanctuary').onclick = () => switchMode('sanctuary');
 
+/* --- FAB LOGIC --- */
+const fabMain = document.getElementById('fab-main');
+const fabMenu = document.getElementById('fab-menu');
+fabMain.onclick = () => {
+  fabMain.classList.toggle('open');
+  fabMenu.classList.toggle('open');
+};
+
 /* --- SOUP LOGIC --- */
 async function renderSoup() {
   renderBreadcrumb();
@@ -581,6 +619,9 @@ async function renderSoup() {
       card.className = 'folder-card';
       card.innerHTML = `<div class="card-name">${f.name}</div>`;
       card.onclick = () => enterFolder(f.id, f.name);
+      // Long press for folder mgmt
+      card.onmousedown = () => startLongPress(f.id, 'folder');
+      card.ontouchstart = () => startLongPress(f.id, 'folder');
       grid.appendChild(card);
     });
   }
@@ -593,6 +634,9 @@ async function renderSoup() {
       card.className = 'discourse-card';
       card.innerHTML = `<div class="card-name">${d.title}</div><div class="card-meta">${new Date(d.updated_at).toLocaleDateString()}</div>`;
       card.onclick = () => openLighthouse(d.id);
+      // Long press for fragment mgmt
+      card.onmousedown = () => startLongPress(d.id, 'discourse');
+      card.ontouchstart = () => startLongPress(d.id, 'discourse');
       grid.appendChild(card);
     });
   }
@@ -685,13 +729,65 @@ document.querySelectorAll('.fmt-btn').forEach(btn => {
 async function saveCurrentDiscourse() {
   if (!currentDiscourseId) return;
   await dbPut("discourses", {
-    id: currentDiscourseId,
+    id: currentHId || currentDiscourseId,
     title: document.getElementById('lh-title').value || "Untitled",
     raw_text: document.getElementById('lh-text').value,
     folder_id: currentFolderId,
     updated_at: Date.now()
   });
 }
+
+/* --- MANAGEMENT (Long Press) --- */
+function startLongPress(id, type) {
+  longPressTimer = setTimeout(() => {
+    mgmtId = id;
+    document.getElementById('mgmt-modal').classList.add('visible');
+    document.getElementById('cosm-overlay').classList.add('active');
+    showToast(`Managing ${type}...`);
+  }, 800);
+}
+window.onmouseup = window.ontouchend = () => clearTimeout(longPressTimer);
+
+document.getElementById('btn-mgmt-cancel').onclick = closeMgmt;
+document.getElementById('btn-mgmt-rename').onclick = openRename;
+document.getElementById('btn-mgmt-delete').onclick = async () => {
+  const store = (mgmtId.startsWith('f_')) ? "folders" : "discourses";
+  await dbDelete(store, mgmtId);
+  closeMgmt();
+  renderSoup();
+};
+document.getElementById('btn-mgmt-move').onclick = () => {
+  showToast("Move function coming in Pulse 2");
+};
+
+function closeMgmt() {
+  document.getElementById('mgmt-modal').classList.remove('visible');
+  document.getElementById('cosm-overlay').classList.remove('active');
+}
+
+function openRename() {
+  document.getElementById('mgmt-modal').classList.remove('visible');
+  document.getElementById('rename-modal').classList.add('visible');
+  document.getElementById('rename-input').focus();
+}
+
+document.getElementById('btn-rename-cancel').onclick = () => {
+  document.getElementById('rename-modal').classList.remove('visible');
+  document.getElementById('cosm-overlay').classList.add('active'); // keep overlay for mgmt
+  document.getElementById('mgmt-modal').classList.add('visible');
+};
+
+document.getElementById('btn-rename-confirm').onclick = async () => {
+  const newName = document.getElementById('rename-input').value;
+  const store = (mgmtId.startsWith('f_')) ? "folders" : "discourses";
+  const item = await dbGet(store, mgmtId);
+  item.name = newName || item.title; 
+  if (store === "discourses") item.title = newName;
+  await dbPut(store, item);
+  document.getElementById('rename-modal').classList.remove('visible');
+  closeMgmt();
+  renderSoup();
+};
 
 /* --- DB HELPERS --- */
 function dbPut(store, data) {
@@ -710,6 +806,12 @@ function dbGetAll(store) {
   return new Promise(res => {
     const tx = db.transaction(store, "readonly");
     tx.objectStore(store).getAll().onsuccess = e => res(e.target.result || []);
+  });
+}
+function dbDelete(store, id) {
+  return new Promise(res => {
+    const tx = db.transaction(store, "readwrite");
+    tx.objectStore(store).delete(id).onsuccess = res;
   });
 }
 
@@ -731,10 +833,19 @@ function showToast(msg) {
   setTimeout(() => { t.style.opacity = "0" }, 2000);
 }
 
-document.getElementById('btn-new-disc').onclick = async () => {
+document.getElementById('fab-new-disc').onclick = async () => {
   const id = "d_" + Date.now();
   await dbPut("discourses", { id, title: "New Fragment", raw_text: "", folder_id: currentFolderId, updated_at: Date.now() });
   openLighthouse(id);
+  renderSoup();
+};
+
+document.getElementById('fab-new-folder').onclick = async () => {
+  const name = prompt("Folder Name:");
+  if (!name) return;
+  const id = "f_" + Date.now();
+  await dbPut("folders", { id, name, parent_id: currentFolderId });
+  renderSoup();
 };
 
 document.getElementById('btn-sync').onclick = () => showToast("Syncing with Akashic...");
